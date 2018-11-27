@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">fello</string>
+    <string name="art">#Arts</string>
+    <string name="facebook_app_id">2192363131003439</string>
+    <string name="login">LogIn</string>
+    <string name="signup">SignUp</string>
+    <string name="fello">feLLo</string>
+
+    <string name="fb_login_protocol_scheme">fb2192363131003439</string>
+
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login_1">Login</string>
+    <string name="or_connect_with">OR Connect With:</string>
+    <string name="todo">TODO</string>
+
+
+</resources>

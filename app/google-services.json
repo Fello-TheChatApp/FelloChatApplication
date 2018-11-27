@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "527641013780",
+    "firebase_url": "https://fello-97.firebaseio.com",
+    "project_id": "fello-97",
+    "storage_bucket": "fello-97.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527641013780:android:1c39e42a09ecbebb",
+        "android_client_info": {
+          "package_name": "com.apps.shreya.chatapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527641013780-sdfabc5rgaiet7402so581eg0r8fh875.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apps.shreya.chatapplication",
+            "certificate_hash": "2c9d9de7b811558a65d6a8233aa30b3f88a056e2"
+          }
+        },
+        {
+          "client_id": "527641013780-jfj0l7lqmcocbb6rmlk4d7vli4vq2l9t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcfD7NEuycFlhgyv3acOIRF0gAiU6pcOU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527641013780-jfj0l7lqmcocbb6rmlk4d7vli4vq2l9t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

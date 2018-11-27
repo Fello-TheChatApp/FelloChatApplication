@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.apps.shreya.chatapplication">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TopicsActiviy"
+            android:label="Topics"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.SlidrActivityTheme" />
+        <activity
+            android:name=".topics.ArtActivity"
+            android:label="#Arts"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".ActivityTopics2" />
+        <activity android:name=".topics.EducationActivity" />
+        <activity android:name=".topics.EntertainmentActivity" />
+        <activity android:name=".topics.DatingActivity" />
+        <activity android:name=".topics.FashionActivity" />
+        <activity android:name=".topics.MusicActivity" />
+        <activity android:name=".topics.PoliticsActivity" />
+        <activity android:name=".topics.PersonalActivity" />
+        <activity android:name=".topics.ThoughtsActivity" />
+        <activity android:name=".topics.ScienceActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <activity android:name=".Profile" />
+        <activity android:name=".LoginPageZero" />
+        <activity android:name=".LoginPageOne" />
+        <activity android:name=".SignUpPage" />
+        <activity android:name=".ForgotPasswordActivity"></activity>
+    </application>
+
+</manifest>
