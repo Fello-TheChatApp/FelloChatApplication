@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,28 +28,41 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
 
-    CircleImageView image_profile;
-    TextView username1;
+    CircleImageView mDisplayImage;
+    TextView mName;
+    private TextView mStatus;
+
+    private Button mStatusBtn;
+    private Button mImageBtn;
 
 
-    DatabaseReference reference;
-    FirebaseUser fuser;
+    private DatabaseReference mUserDatabase;
+    private FirebaseUser mCurrentUser;
+
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        image_profile = view.findViewById(R.id.profile_pic);
-        username1 = view.findViewById(R.id.username);
+        mDisplayImage = view.findViewById(R.id.profile_pic);
+        mName = view.findViewById(R.id.username);
+        mStatus = view.findViewById(R.id.default_intro);
 
-        fuser = FirebaseAuth.getInstance().getCurrentUser();
-        reference= FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+        mUserDatabase= FirebaseDatabase.getInstance().getReference("Users").child(mCurrentUser.getUid());
 
-        reference.addValueEventListener(new ValueEventListener() {
+        String current_uid = mCurrentUser.getUid();
+
+        mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //User user = dataSnapshot.getValue(User.class);
-                //username1.setText(user.getUsername);
+                String name = dataSnapshot.child("name").getValue().toString();
+                final String image = dataSnapshot.child("image").getValue().toString();
+                String status = dataSnapshot.child("status").getValue().toString();
+                String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
+
+                mName.setText(name);
+                mStatus.setText(status);
             }
 
             @Override

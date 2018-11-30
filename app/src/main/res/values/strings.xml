@@ -13,6 +13,7 @@
     <string name="login_1">Login</string>
     <string name="or_connect_with">OR Connect With:</string>
     <string name="todo">TODO</string>
+    <string name="default_status">Hi! This is my introduction.</string>
 
 
 </resources>

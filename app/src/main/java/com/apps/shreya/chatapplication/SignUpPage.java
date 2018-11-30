@@ -119,7 +119,7 @@ public class SignUpPage extends AppCompatActivity {
 
                             HashMap<String, String> userMap = new HashMap<>();
                             userMap.put("name", name);
-                            userMap.put("status", "Hi there I'm using Lapit Chat App.");
+                            userMap.put("status", "Hi there! This is my introduction.");
                             userMap.put("image", "default");
                             userMap.put("thumb_image", "default");
                             userMap.put("device_token", device_token);
