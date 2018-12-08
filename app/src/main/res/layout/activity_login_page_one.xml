@@ -6,6 +6,12 @@
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true">
 
+    <!--
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+-->
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

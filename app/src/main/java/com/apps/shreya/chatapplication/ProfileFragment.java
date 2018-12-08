@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
         mStatus = view.findViewById(R.id.default_intro);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mUserDatabase= FirebaseDatabase.getInstance().getReference("Users").child(mCurrentUser.getUid());
+        mUserDatabase= FirebaseDatabase.getInstance().getReference("UsersActivity").child(mCurrentUser.getUid());
 
         String current_uid = mCurrentUser.getUid();
 

@@ -113,7 +113,7 @@ public class SignUpPage extends AppCompatActivity {
                             FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                             String uid = current_user.getUid();
 
-                            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                            mDatabase = FirebaseDatabase.getInstance().getReference().child("UsersActivity").child(uid);
 
                             String device_token = FirebaseInstanceId.getInstance().getToken();
 

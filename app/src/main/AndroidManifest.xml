@@ -46,7 +46,8 @@
         <activity android:name=".LoginPageZero" />
         <activity android:name=".LoginPageOne" />
         <activity android:name=".SignUpPage" />
-        <activity android:name=".ForgotPasswordActivity"></activity>
+        <activity android:name=".ForgotPasswordActivity" />
+        <activity android:name=".UsersActivity"></activity>
     </application>
 
 </manifest>

@@ -1,7 +1,12 @@
 package com.apps.shreya.chatapplication;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+/*
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -20,7 +25,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+import com.facebook.login.widget.LoginButton; */
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -63,8 +68,44 @@ public class LoginPageOne extends AppCompatActivity {
 
 
     }
+/*
+    //to send the notification for no internet connection
 
+    public boolean isConnected(Context context) {
 
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) {
+                return true;
+            } else{ return false;}
+        } else{ return false;}
+    }
+
+    //to hide all data
+
+    public AlertDialog.Builder buildDialog(Context c) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle("No Internet Connection");
+        builder.setMessage("You need to have Mobile Data or wifi to access this. Press ok to Exit");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                finish();
+            }
+        });
+
+        return builder;
+    }
+*/
     private void setUser() {
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +113,14 @@ public class LoginPageOne extends AppCompatActivity {
 
                 String user  = emailAddress.getEditText().getText().toString().trim();
                 String pass_text = password.getEditText().getText().toString().trim();
-
+/*
+// checking the internet connnection
+                if(!isConnected(LoginPageOne.this)){ buildDialog(LoginPageOne.this).show();}
+                else {
+                    Toast.makeText(LoginPageOne.this,"Welcome", Toast.LENGTH_SHORT).show();
+                    setContentView(R.layout.activity_main);
+                }
+*/
                 if (!TextUtils.isEmpty(user) && !TextUtils.isEmpty(pass_text)) {
 
 
