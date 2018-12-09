@@ -52,11 +52,13 @@
         <activity android:name=".LoginPageOne" />
         <activity android:name=".SignUpPage" />
         <activity android:name=".ForgotPasswordActivity" />
+        <activity android:name=".UsersActivity"/>
         <activity android:name=".StatusActivity" />
 
 
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
+
     </application>
 
 

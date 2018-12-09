@@ -75,12 +75,16 @@ private ProgressDialog mProgressDialog;
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        mUserDatabase= FirebaseDatabase.getInstance().getReference("UsersActivity").child(mCurrentUser.getUid());
+
+
 
 
        mStatusBtn=(Button)view.findViewById(R.id.settings_status_btn);
 mImageBtn=(Button) view.findViewById(R.id.settings_image_btn);
 
 mImageStorage=FirebaseStorage.getInstance().getReference();
+
 
 
         String current_uid = mCurrentUser.getUid();

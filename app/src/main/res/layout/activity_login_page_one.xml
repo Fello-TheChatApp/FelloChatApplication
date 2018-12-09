@@ -6,6 +6,12 @@
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true">
 
+    <!--
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+-->
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -22,33 +28,37 @@
             android:contentDescription="TODO" />
 
 
-        <!-- Username Label -->
+        <!-- Username Label
+         android:id="@+id/username" -->
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
 
             <EditText
-                android:id="@+id/username"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                android:hint="Username"
+                android:inputType="textEmailAddress"
+                android:hint="Email"
                 android:autofillHints=""/>
 
         </android.support.design.widget.TextInputLayout>
 
 
-        <!-- Password Label -->
+        <!-- Password Label
+          android:id="@+id/password" -->
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
 
             <EditText
-                android:id="@+id/password"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints=""

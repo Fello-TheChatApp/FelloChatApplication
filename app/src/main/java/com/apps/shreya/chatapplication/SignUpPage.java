@@ -71,7 +71,7 @@ public class SignUpPage extends AppCompatActivity {
                 String email = mEmail.getEditText().getText().toString();
                 String password = mPassword.getEditText().getText().toString();
 
-                if(!TextUtils.isEmpty(name) || !TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)){
+                if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
 
                     mRegProgress.setTitle("Registering User");
                     mRegProgress.setMessage("Please wait while we create your account !");
@@ -113,7 +113,7 @@ public class SignUpPage extends AppCompatActivity {
                             FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                             String uid = current_user.getUid();
 
-                            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                            mDatabase = FirebaseDatabase.getInstance().getReference().child("UsersActivity").child(uid);
 
                             String device_token = FirebaseInstanceId.getInstance().getToken();
 
@@ -142,6 +142,7 @@ public class SignUpPage extends AppCompatActivity {
                                 }
                             });
                         } else {
+                            mRegProgress.hide();
                             // If sign in fails, display a message to the user.
                             Toast.makeText(SignUpPage.this, "Password length: 6+",
                                     Toast.LENGTH_SHORT).show();
