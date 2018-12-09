@@ -1,20 +1,19 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"></style>
 
-        <!-- Customize your theme here. -->
-        <!-- FOR ACTION BAR1 -->
-        <style name="CustomToolbarStyle" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Customize your theme here. -->
+    <!-- FOR ACTION BAR1 -->
+    <style name="CustomToolbarStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:background">@color/colorPrimary</item>
-            <item name="android:fontFamily">@font/nothing_you_could_do</item>
-            <item name="android:textStyle">bold</item>
-            <item name="android:textColor">#000</item>
+        <item name="android:fontFamily">@font/nothing_you_could_do</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#000</item>
         <item name="android:textSize">26dp</item>
 
     </style>
-    
+
     <style name="AppTheme.SlidrActivityTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -30,10 +29,17 @@
         <item name="android:textColor">#000</item>
     </style>
 
+
     <!-- FOR ACTION BAR3 -->
     <style name="ActionBar3" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">#711961</item>
         <item name="android:textColor">@color/colorWhite</item>
     </style>
+
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
 
 </resources>

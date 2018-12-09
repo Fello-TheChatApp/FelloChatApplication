@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "527641013780-bpv7btanhvdu6rifjbjsbk4fbtkse4ip.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apps.shreya.chatapplication",
+            "certificate_hash": "d0d0b9a8b8fee7fb42a7a6efc37746a433b323a7"
+          }
+        },
+        {
           "client_id": "527641013780-jfj0l7lqmcocbb6rmlk4d7vli4vq2l9t.apps.googleusercontent.com",
           "client_type": 3
         }
