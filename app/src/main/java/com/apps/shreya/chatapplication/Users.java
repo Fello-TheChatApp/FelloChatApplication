@@ -4,7 +4,7 @@ public class Users  {
     public String name;
     public String image;
     public String status;
-    public String thumb_image;
+    public static  String thumb_image;
 
 
 
@@ -43,7 +43,7 @@ public class Users  {
         this.status = status;
     }
 
-    public String getThumb_image() {
+    public static String getThumb_image() {
         return thumb_image;
     }
 

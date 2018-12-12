@@ -3,6 +3,7 @@ package com.apps.shreya.chatapplication;
 import android.app.ProgressDialog;
 import android.content.Intent;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,12 +31,22 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import org.w3c.dom.Text;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 
 import static android.app.Activity.RESULT_OK;
 import static java.lang.System.load;
@@ -46,8 +58,8 @@ import static java.lang.System.load;
 
 public class ProfileFragment extends Fragment  {
 
-    CircleImageView mDisplayImage;
-    TextView mName;
+    private CircleImageView mDisplayImage;
+    private TextView mName;
     private TextView mStatus;
 
     private Button mStatusBtn;
@@ -69,9 +81,9 @@ private ProgressDialog mProgressDialog;
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        mDisplayImage = view.findViewById(R.id.profile_pic);
-        mName = view.findViewById(R.id.username);
-        mStatus = view.findViewById(R.id.default_intro);
+        mDisplayImage = (CircleImageView) view.findViewById(R.id.profile_pic);
+        mName =(TextView) view.findViewById(R.id.username);
+        mStatus = (TextView) view.findViewById(R.id.default_intro);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -90,21 +102,38 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
         String current_uid = mCurrentUser.getUid();
 
         mUserDatabase=FirebaseDatabase.getInstance().getReference().child("Users").child(current_uid);
+
+        mUserDatabase.keepSynced(true);
+
          mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String name = dataSnapshot.child("name").getValue().toString();
-                String image = dataSnapshot.child("image").getValue().toString();
+                final String image = dataSnapshot.child("image").getValue().toString();
                 String status = dataSnapshot.child("status").getValue().toString();
                 String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
                 mName.setText(name);
                 mStatus.setText(status);
+                if (!image.equals("default")) {
 
-                Picasso.get().load(image).into(mDisplayImage);
+                   Picasso.with(getActivity()).load(image).networkPolicy(NetworkPolicy.OFFLINE)
+                           .placeholder(R.drawable.default_avatar).into(mDisplayImage, new Callback() {
+
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError() {
+                            Picasso.with(getActivity()).load(image).placeholder(R.drawable.default_avatar).into(mDisplayImage);
+                        }
+
+
+                    });
+                }
             }
-
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -115,13 +144,14 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
             
 
         });
+
          mStatusBtn.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
                 String status_value=mStatus.getText().toString();
                  //Intent status_intent=new Intent(getContext(),StatusActivity.class);
 
-                 Intent intent = new Intent(getContext(),StatusActivity.class);
+                 Intent intent = new Intent(getActivity(),StatusActivity.class);
                  intent.putExtra("status_value",status_value);
                  startActivity(intent);
 
@@ -134,13 +164,11 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
                  Intent galleryIntent=new Intent();
                  galleryIntent.setType("image/*");
                  galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
                  startActivityForResult(Intent.createChooser(galleryIntent,"SELECT_IMAGE"),GALLERY_PICK);
 
 
-               /*  // start picker to get image for cropping and then use the image in cropping activity
-                 CropImage.activity()
-                         .setGuidelines(CropImageView.Guidelines.ON)
-                         .start(getActivity());  */
+
              }
          });
 
@@ -162,61 +190,113 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == GALLERY_PICK && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
 
             CropImage.activity(imageUri)
                     .setAspectRatio(1,1)
+                    .setMinCropWindowSize(500,500)
                     .start(getContext(), this);
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK)
-            {
-                 mProgressDialog = new ProgressDialog(getActivity());
+
+            if (resultCode == RESULT_OK) {
+
+                mProgressDialog = new ProgressDialog(getActivity());
                 mProgressDialog.setTitle("Uploading Image");
                 mProgressDialog.setMessage("Please wait until we process and upload the image ");
                 mProgressDialog.setCanceledOnTouchOutside(false);
                 mProgressDialog.show();
 
                 Uri resultUri = result.getUri();
-                String current_user_id=mCurrentUser.getUid();
-                StorageReference filepath= mImageStorage.child("profile_images").child(current_user_id+".jpg");
+                File thumb_filePath = new File(resultUri.getPath());
+
+                String current_user_id = mCurrentUser.getUid();
+
+
+                Bitmap thumb_bitmap = null;
+                try {
+                    thumb_bitmap = new Compressor(getActivity())
+                            .setMaxWidth(200)
+                            .setMaxWidth(200)
+                            .setQuality(75)
+                            .compressToBitmap(thumb_filePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                final byte[] thumb_byte = baos.toByteArray();
+
+
+                StorageReference filepath = mImageStorage.child("profile_images").child(current_user_id + ".jpg");
+                final StorageReference thumb_filepath = mImageStorage.child("profile_images").child("thumbs").child(current_user_id + ".jpg");
+
                 filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if(task.isSuccessful())
-                        {
-                            String download_url=task.getResult().getStorage().getDownloadUrl().toString();
-                            mUserDatabase.child("image").setValue(download_url).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
 
-                                    if(task.isSuccessful())
-                                    {
-                                    mProgressDialog.dismiss();
-                                    Toast.makeText(getActivity(), "Success Uploading", Toast.LENGTH_LONG).show();
-                                }}
+                        if (task.isSuccessful()) {
+
+                            final String download_url = task.getResult().getStorage().getDownloadUrl().toString();
+
+                            UploadTask uploadTask = thumb_filepath.putBytes(thumb_byte);
+                            uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> thumb_task) {
+
+                                    String thumb_downloadUrl = thumb_task.getResult().getStorage().getDownloadUrl().toString();
+
+
+                                    if (thumb_task.isSuccessful()) {
+
+                                        Map update_hashMap = new HashMap<>();
+                                        update_hashMap.put("image", download_url);
+                                        update_hashMap.put("thumb_image",thumb_downloadUrl);
+
+                                        mUserDatabase.updateChildren(update_hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                if (task.isSuccessful()) {
+                                                    mProgressDialog.dismiss();
+                                                    Toast.makeText(getActivity(), "Success Uploading", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+
+                                        });
+
+
+
+                                    } else {
+                                        Toast.makeText(getActivity(), "Error in uploading Thumbnail", Toast.LENGTH_LONG).show();
+                                        mProgressDialog.dismiss();
+                                    }
+                                }
                             });
 
-                           // Toast.makeText(getActivity(), "Working", Toast.LENGTH_LONG).show();
 
-                        }
-                        else
-                        {
-                            Toast.makeText(getActivity(), "Error in uploading", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Error in uploading ", Toast.LENGTH_LONG).show();
+                            mProgressDialog.dismiss();
                         }
                     }
                 });
-
             }
             else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
-            {
-                Exception error = result.getError();
+                {
+                    Exception error = result.getError();
+                }
             }
+
         }
-    }
     public static String random() {
         Random generator = new Random();
         StringBuilder randomStringBuilder = new StringBuilder();
