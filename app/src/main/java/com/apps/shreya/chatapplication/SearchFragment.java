@@ -1,5 +1,7 @@
 package com.apps.shreya.chatapplication;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,71 +28,112 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchFragment extends Fragment {
 
-    private Toolbar mToolbar;
+   private Toolbar mToolbar;
 
-    private RecyclerView allUsersList;
+    private RecyclerView mUsersList;
 
     private DatabaseReference UsersRef;
 
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    private LinearLayoutManager mLayoutManager;
 
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        mToolbar = view.findViewById(R.id.action_bar);
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        allUsersList = view.findViewById(R.id.users_list);
-        allUsersList.setHasFixedSize(true);
-        allUsersList.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        mToolbar =(Toolbar) view.findViewById(R.id.action_bar);
 
-        UsersRef = FirebaseDatabase.getInstance().getReference().child("UsersActivity");
+        mLayoutManager=new LinearLayoutManager(getContext());
+
+        mUsersList = (RecyclerView) view.findViewById(R.id.users_list);
+        mUsersList.setHasFixedSize(true);
+        mUsersList.setLayoutManager(mLayoutManager);
+
+        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
         return view;
     }
 
-    public void onStart() {
+   public void onStart() {
 
-        super.onStart();
+       super.onStart();
 
-        FirebaseRecyclerOptions<Users> options =
+      FirebaseRecyclerOptions<Users> options =
                 new FirebaseRecyclerOptions.Builder<Users>()
                         .setQuery(UsersRef, Users.class)
+
                         .build();
 
-        FirebaseRecyclerAdapter<Users, UsersViewHolder> adapter =
-                new FirebaseRecyclerAdapter<Users, UsersViewHolder>(options) {
-                    @Override
-                    protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull Users model) {
-                        holder.userName.setText(model.getName());
-                        holder.userStatus.setText(model.getStatus());
-                        Picasso.get().load(model.getImage()).into(holder.profileImage);
-                    }
+       FirebaseRecyclerAdapter<Users, UsersViewHolder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<Users, UsersViewHolder>(options) {
 
-                    @NonNull
-                    @Override
-                    public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-                        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.users_single_layout, viewGroup,false );
-                        SearchFragment.UsersViewHolder viewHolder = new SearchFragment.UsersViewHolder(view);
-                        return viewHolder;
-                    }
-                };
 
-        allUsersList.setAdapter(adapter);
-        adapter.startListening();
+        @Override
+        protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull Users model) {
 
-    }
+            holder.setName(model.getName());
+            holder.setUserStatus(model.getStatus());
 
-    public static class UsersViewHolder extends RecyclerView.ViewHolder{
+            holder.setUserImage(Users.getThumb_image(),getActivity().getApplicationContext());
+          final   String user_id=getRef(position).getKey();
+                                holder.mView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
 
-        TextView userName, userStatus;
-        CircleImageView profileImage;
+                                        Intent profileIntent=new Intent(getActivity(),ProfileActivity.class);
+                                        profileIntent.putExtra("user_id",user_id);
+                                        startActivity(profileIntent);
+                                    }
+                                });
+            //Picasso.with(getActivity()).load(model.getImage()).into(holder.profileImage);
+       }
+
+       @NonNull
+       @Override
+       public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.users_single_layout, viewGroup,false );
+       SearchFragment.UsersViewHolder viewHolder = new SearchFragment.UsersViewHolder(view);
+       return viewHolder;
+       }                  };
+
+       mUsersList.setAdapter(firebaseRecyclerAdapter);
+       firebaseRecyclerAdapter.startListening();
+
+   }
+
+    public  static class UsersViewHolder extends RecyclerView.ViewHolder{
+
+        View mView;
+        TextView userNameView, userStatus;
+        //CircleImageView userImageView;
+
 
         public UsersViewHolder(View itemView) {
             super(itemView);
+            mView=itemView;
 
-            userName = (TextView) itemView.findViewById(R.id.user_single_name);
-            userStatus = (TextView) itemView.findViewById(R.id.user_single_status);
-            profileImage = (CircleImageView) itemView.findViewById(R.id.user_single_image);
         }
-    }
-}
+
+        public  void setName (String name)
+        {
+
+            userNameView = (TextView) mView.findViewById(R.id.user_single_name);
+            userNameView.setText(name);
+
+
+        }
+
+        public void setUserStatus(String status)
+
+
+        {
+            userStatus = (TextView) mView.findViewById(R.id.user_single_status);
+            userStatus.setText(status);
+        }
+
+        public void setUserImage(String thumb_image,Context cxt)
+        {
+            CircleImageView userImageView=(CircleImageView) mView.findViewById(R.id.user_single_image);
+            Picasso.with(cxt).load(thumb_image).placeholder(R.drawable.default_avatar).into(userImageView);
+        }
+    }}
+

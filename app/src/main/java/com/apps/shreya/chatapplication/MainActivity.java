@@ -110,8 +110,12 @@ public class MainActivity extends AppCompatActivity {
             FirebaseAuth.getInstance().signOut();
             sendToStart();
         }
+
+
         return true;
     }
+
+
 }
 
     /**
