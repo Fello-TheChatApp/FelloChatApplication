@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.apps.shreya.chatapplication.LoginPageOne;
+import com.apps.shreya.chatapplication.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -113,7 +115,7 @@ public class SignUpPage extends AppCompatActivity {
                             FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                             String uid = current_user.getUid();
 
-                            mDatabase = FirebaseDatabase.getInstance().getReference().child("UsersActivity").child(uid);
+                            mDatabase = FirebaseDatabase.getInstance().getReference().child("SearchFragment").child(uid);
 
                             String device_token = FirebaseInstanceId.getInstance().getToken();
 

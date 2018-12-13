@@ -102,8 +102,8 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
         String current_uid = mCurrentUser.getUid();
 
         mUserDatabase=FirebaseDatabase.getInstance().getReference().child("Users").child(current_uid);
+        mUserDatabase.keepSynced(true);
 
-       // mUserDatabase.keepSynced(true);
 
          mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -117,7 +117,7 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
                 mStatus.setText(status);
                 if (!image.equals("default")) {
 
-                   Picasso.with(getActivity()).load(image)
+                   Picasso.with(getActivity()).load(image).networkPolicy(NetworkPolicy.OFFLINE)
                            .placeholder(R.drawable.default_avatar).into(mDisplayImage, new Callback() {
 
                         @Override
