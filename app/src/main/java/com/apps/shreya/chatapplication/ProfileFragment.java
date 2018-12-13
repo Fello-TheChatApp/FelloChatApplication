@@ -103,7 +103,7 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
 
         mUserDatabase=FirebaseDatabase.getInstance().getReference().child("Users").child(current_uid);
 
-        mUserDatabase.keepSynced(true);
+       // mUserDatabase.keepSynced(true);
 
          mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -117,7 +117,7 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
                 mStatus.setText(status);
                 if (!image.equals("default")) {
 
-                   Picasso.with(getActivity()).load(image).networkPolicy(NetworkPolicy.OFFLINE)
+                   Picasso.with(getActivity()).load(image)
                            .placeholder(R.drawable.default_avatar).into(mDisplayImage, new Callback() {
 
                         @Override
@@ -151,7 +151,7 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
                 String status_value=mStatus.getText().toString();
                  //Intent status_intent=new Intent(getContext(),StatusActivity.class);
 
-                 Intent intent = new Intent(getActivity(),StatusActivity.class);
+                 Intent intent = new Intent(getContext(),StatusActivity.class);
                  intent.putExtra("status_value",status_value);
                  startActivity(intent);
 
@@ -256,9 +256,9 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
 
                                     if (thumb_task.isSuccessful()) {
 
-                                        Map update_hashMap = new HashMap<>();
+                                        Map update_hashMap = new HashMap();
                                         update_hashMap.put("image", download_url);
-                                        update_hashMap.put("thumb_image",thumb_downloadUrl);
+                                        update_hashMap.put("thumb_image", thumb_downloadUrl);
 
                                         mUserDatabase.updateChildren(update_hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -274,7 +274,6 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
                                         });
 
 
-
                                     } else {
                                         Toast.makeText(getActivity(), "Error in uploading Thumbnail", Toast.LENGTH_LONG).show();
                                         mProgressDialog.dismiss();
@@ -287,6 +286,7 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
                             Toast.makeText(getActivity(), "Error in uploading ", Toast.LENGTH_LONG).show();
                             mProgressDialog.dismiss();
                         }
+
                     }
                 });
             }
