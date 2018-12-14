@@ -1,10 +1,12 @@
 package com.apps.shreya.chatapplication;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -58,6 +60,8 @@ import static java.lang.System.load;
 
 public class ProfileFragment extends Fragment  {
 
+    private DrawerLocker mDrawerLocker; // to hide the drawer layout
+
     private CircleImageView mDisplayImage;
     private TextView mName;
     private TextView mStatus;
@@ -77,10 +81,21 @@ private ProgressDialog mProgressDialog;
     public ProfileFragment() {
     }
 
+//-------------- to lock the drawer layout----------------------
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mDrawerLocker = (DrawerLocker) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement DrawerLocker");
+        }
+    }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        mDrawerLocker.lockDrawer();// to hide the drawer layout
         mDisplayImage = (CircleImageView) view.findViewById(R.id.profile_pic);
         mName =(TextView) view.findViewById(R.id.username);
         mStatus = (TextView) view.findViewById(R.id.default_intro);
@@ -186,6 +201,15 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
 
 
     }
+
+    // to hide the drawer layout
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDrawerLocker.unlockDrawer();
+    }
+
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -322,4 +346,5 @@ mImageStorage=FirebaseStorage.getInstance().getReference();
 
 
     //
+
 }

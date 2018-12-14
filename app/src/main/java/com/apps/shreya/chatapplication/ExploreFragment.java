@@ -1,5 +1,6 @@
 package com.apps.shreya.chatapplication;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,7 +28,7 @@ import java.util.Set;
 
 public class ExploreFragment extends Fragment {
 
-
+    private DrawerLocker mDrawerLocker;
     private View groupFragmentView;
     private ListView list_view;
     private ArrayAdapter<String> arrayAdapter;
@@ -40,10 +41,21 @@ public class ExploreFragment extends Fragment {
 
     }
 
+    //-------------- to lock the drawer layout----------------------
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mDrawerLocker = (DrawerLocker) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement DrawerLocker");
+        }
+    }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         groupFragmentView= inflater.inflate(R.layout.fragment_explore, container, false);
 
+        mDrawerLocker.lockDrawer();// to hide the drawer layout
         GroupRef=FirebaseDatabase.getInstance().getReference().child("Groups");
 
 
@@ -53,6 +65,14 @@ public class ExploreFragment extends Fragment {
     }
 
 
+
+    // to hide the drawer layout
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDrawerLocker.unlockDrawer();
+    }
 
 
 }

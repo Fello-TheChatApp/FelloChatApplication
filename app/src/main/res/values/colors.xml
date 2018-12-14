@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--<color name="colorPrimary">#7c6aba</color>-->
     <color name="colorPrimary">#c3c1cc</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorAccent">#20f240ff</color>
     <color name="black">#000</color>
     <color name="mainpurple">#711561</color>
     <color name="mainblue">#147793</color>
+    <color name="toolbar">#7c6aba</color>
 </resources>

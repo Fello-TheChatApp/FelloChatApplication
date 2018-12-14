@@ -1,5 +1,6 @@
 package com.apps.shreya.chatapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchFragment extends Fragment {
 
+    private DrawerLocker mDrawerLocker; // to hide the drawer layout
    private Toolbar mToolbar;
 
     private RecyclerView mUsersList;
@@ -36,10 +38,21 @@ public class SearchFragment extends Fragment {
 
     private LinearLayoutManager mLayoutManager;
 
+    //-------------- to lock the drawer layout----------------------
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mDrawerLocker = (DrawerLocker) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement DrawerLocker");
+        }
+    }
+
    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-
+       mDrawerLocker.lockDrawer();// to hide the drawer layout
         mToolbar =(Toolbar) view.findViewById(R.id.action_bar);
 
         mLayoutManager=new LinearLayoutManager(getContext());
@@ -54,7 +67,16 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
-   public void onStart() {
+    // to hide the drawer layout
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDrawerLocker.unlockDrawer();
+    }
+
+
+    public void onStart() {
 
        super.onStart();
 
@@ -135,5 +157,6 @@ public class SearchFragment extends Fragment {
             CircleImageView userImageView=(CircleImageView) mView.findViewById(R.id.user_single_image);
             Picasso.with(cxt).load(thumb_image).placeholder(R.drawable.default_avatar).into(userImageView);
         }
-    }}
+    }
+}
 
