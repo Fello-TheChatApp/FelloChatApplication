@@ -6,7 +6,7 @@
     <!-- Customize your theme here. -->
     <!-- FOR ACTION BAR1 -->
     <style name="CustomToolbarStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">@color/toolbar</item>
         <item name="android:fontFamily">@font/nothing_you_could_do</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#000</item>
