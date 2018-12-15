@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.squareup.picasso.Picasso;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,8 +38,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class HomeFragment extends Fragment {
-
     private RecyclerView mConvList;
+
     private DatabaseReference mConvDatabase;
     private DatabaseReference mMessageDatabase;
     private DatabaseReference mUsersDatabase;
@@ -46,219 +50,208 @@ public class HomeFragment extends Fragment {
 
     private View mMainView;
 
+
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_home, container, false);
-/*
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        mMainView = inflater.inflate(R.layout.fragment_home, container, false);
+
         mConvList = (RecyclerView) mMainView.findViewById(R.id.conv_list);
         mAuth = FirebaseAuth.getInstance();
 
-        mCurrent_user_id = mAuth.getCurrentUser().getUid();
+            mCurrent_user_id = mAuth.getCurrentUser().getUid();
 
-        mConvDatabase = FirebaseDatabase.getInstance().getReference().child("Chat").child(mCurrent_user_id);
+            mConvDatabase = FirebaseDatabase.getInstance().getReference().child("Chat").child(mCurrent_user_id);
 
-        mConvDatabase.keepSynced(true);
-        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-        mMessageDatabase = FirebaseDatabase.getInstance().getReference().child("messages").child(mCurrent_user_id);
-        mUsersDatabase.keepSynced(true);
+            mConvDatabase.keepSynced(true);
+            mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+            mMessageDatabase = FirebaseDatabase.getInstance().getReference().child("messages").child(mCurrent_user_id);
+            mUsersDatabase.keepSynced(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(true);
+       linearLayoutManager.setStackFromEnd(true);
 
         mConvList.setHasFixedSize(true);
         mConvList.setLayoutManager(linearLayoutManager);
-
+//        mConvList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inflate the layout for this fragment
         return mMainView;
-
-*/
-        /* -------------------------------------------------------------------------*/
-
-/*
-        @Override
-        public void onStart() {
-            super.onStart();
-
-            Query conversationQuery = mConvDatabase.orderByChild("timestamp");
-
-            FirebaseRecyclerAdapter<Conv, ConvViewHolder> firebaseConvAdapter = new FirebaseRecyclerAdapter<Conv, ConvViewHolder>(
-                    Conv.class,
-                    R.layout.users_single_layout,
-                    ConvViewHolder.class,
-                    conversationQuery
-            ) {
-                @Override
-                protected void populateViewHolder(final ConvViewHolder convViewHolder, final Conv conv, int i) {
+    }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
-                    final String list_user_id = getRef(i).getKey();
+        Query conversationQuery = mConvDatabase.orderByChild("timestamp");
 
-                    Query lastMessageQuery = mMessageDatabase.child(list_user_id).limitToLast(1);
+        FirebaseRecyclerOptions<Conv> options =
+                new FirebaseRecyclerOptions.Builder<Conv>()
+                        .setQuery(conversationQuery, Conv.class)
+                        .build();
 
-                    lastMessageQuery.addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                            String data = dataSnapshot.child("message").getValue().toString();
-                            convViewHolder.setMessage(data, conv.isSeen());
+        final FirebaseRecyclerAdapter<Conv,ConvViewHolder> firebaseConvAdapter = new FirebaseRecyclerAdapter<Conv, ConvViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull final ConvViewHolder convViewHolder, int i, @NonNull final Conv conv) {
+
+                final String list_user_id = getRef(i).getKey();
+
+                Query lastMessageQuery = mMessageDatabase.child(list_user_id).limitToLast(1);
+
+                lastMessageQuery.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                        String data = dataSnapshot.child("message").getValue().toString();
+                        convViewHolder.setMessage(data, conv.isSeen());
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                mUsersDatabase.child(list_user_id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        final String userName = dataSnapshot.child("name").getValue().toString();
+                        String userThumb = dataSnapshot.child("thumb_image").getValue().toString();
+
+                        if(dataSnapshot.hasChild("online")) {
+
+//                            String userOnline = dataSnapshot.child("online").getValue().toString();
+//                            convViewHolder.setUserOnline(userOnline);
 
                         }
 
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        convViewHolder.setName(userName);
+                        convViewHolder.setUserImage(userThumb, getContext());
 
-                        }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+                        convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
 
-                    mUsersDatabase.child(list_user_id).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            final String userName = dataSnapshot.child("name").getValue().toString();
-                            String userThumb = dataSnapshot.child("thumb_image").getValue().toString();
-
-                            if(dataSnapshot.hasChild("online")) {
-
-                                String userOnline = dataSnapshot.child("online").getValue().toString();
-                                convViewHolder.setUserOnline(userOnline);
+                                Intent chatIntent = new Intent(getContext(), ChatActivity.class);
+                                chatIntent.putExtra("user_id", list_user_id);
+                                chatIntent.putExtra("user_name", userName);
+                                startActivity(chatIntent);
 
                             }
-
-                            convViewHolder.setName(userName);
-                            convViewHolder.setUserImage(userThumb, getContext());
-
-                            convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
+                        });
 
 
-                                    Intent chatIntent = new Intent(getContext(), UsersActivity.class);
-                                    chatIntent.putExtra("user_id", list_user_id);
-                                    chatIntent.putExtra("user_name", userName);
-                                    startActivity(chatIntent);
+                    }
 
-                                }
-                            });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
+                    }
+                });
+            }
 
-                        }
+            @NonNull
+            @Override
+            public ConvViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.users_single_layout, viewGroup,false );
+                HomeFragment.ConvViewHolder viewHolder = new HomeFragment.ConvViewHolder(view);
+                return viewHolder;
+            }
+        };
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+        mConvList.setAdapter(firebaseConvAdapter);
+        firebaseConvAdapter.startListening();
 
-                        }
-                    });
+    }
 
-                }
-            };
+    public static class ConvViewHolder extends RecyclerView.ViewHolder {
 
-            mConvList.setAdapter(firebaseConvAdapter);
+        View mView;
+
+        public ConvViewHolder(View itemView) {
+            super(itemView);
+
+            mView = itemView;
 
         }
 
-        public static class ConvViewHolder extends RecyclerView.ViewHolder {
+        public void setMessage(String message, boolean isSeen){
 
-            View mView;
+            TextView userStatusView = (TextView) mView.findViewById(R.id.user_single_status);
+            userStatusView.setText(message);
 
-            public ConvViewHolder(View itemView) {
-                super(itemView);
-
-                mView = itemView;
-
+            if(!isSeen){
+                userStatusView.setTypeface(userStatusView.getTypeface(), Typeface.BOLD);
+            } else {
+                userStatusView.setTypeface(userStatusView.getTypeface(), Typeface.NORMAL);
             }
 
-            public void setMessage(String message, boolean isSeen){
+        }
 
-                TextView userStatusView = (TextView) mView.findViewById(R.id.user_single_status);
-                userStatusView.setText(message);
+        public void setName(String name){
 
-                if(!isSeen){
-                    userStatusView.setTypeface(userStatusView.getTypeface(), Typeface.BOLD);
-                } else {
-                    userStatusView.setTypeface(userStatusView.getTypeface(), Typeface.NORMAL);
-                }
+            TextView userNameView = (TextView) mView.findViewById(R.id.user_single_name);
+            userNameView.setText(name);
 
-            }
+        }
 
-            public void setName(String name){
+        public void setUserImage(String thumb_image, Context ctx){
 
-                TextView userNameView = (TextView) mView.findViewById(R.id.user_single_name);
-                userNameView.setText(name);
+            CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.user_single_image);
+            Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.default_avatar).into(userImageView);
 
-            }
+        }
 
-            public void setUserImage(String thumb_image, Context ctx){
+        public void setUserOnline(String online_status) {
 
-                CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.user_single_image);
-                Picasso.get().load(thumb_image).placeholder(R.drawable.default_avatar).into(userImageView);
+            ImageView userOnlineView = (ImageView) mView.findViewById(R.id.user_single_online_icon);
 
-            }
+            if(online_status.equals("true")){
 
-            public void setUserOnline(String online_status) {
+                userOnlineView.setVisibility(View.VISIBLE);
 
-                ImageView userOnlineView = (ImageView) mView.findViewById(R.id.user_single_online_icon);
+            } else {
 
-                if(online_status.equals("true")){
-
-                    userOnlineView.setVisibility(View.VISIBLE);
-
-                } else {
-
-                    userOnlineView.setVisibility(View.INVISIBLE);
-
-                }
+                userOnlineView.setVisibility(View.INVISIBLE);
 
             }
 
         }
+
+
+    }
+
 
 
 
 
 
 }
-*/
-/*
-        public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
-            inflater.inflate(R.menu.menu, menu);
-            super.onCreateOptionsMenu(menu, inflater);
-        }
-        public boolean onOptionsItemSelected (MenuItem item){
-
-            //TO OPEN NEW ACTIVITY ON MENU ITEM CLICK
-            Intent intent = new Intent(getActivity(), TopicsActiviy.class);
-            startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.slide_up, R.anim.stay);
-
-            //finish();
-            //overridePendingTransition(R.anim.stay, R.anim.slide_down);
-            return true;
-            //return super.onOptionsItemSelected(item);
-     */   }
-
-
-}
-
