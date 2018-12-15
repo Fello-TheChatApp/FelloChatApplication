@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
 
     // for the navigation drawer
     private DrawerLayout mDrawerLayout;
-//    private ActionBarDrawerToggle mToggle;
+    private ActionBarDrawerToggle mToggle;
 
     //Declare an instance of FirebaseAuth
     private FirebaseAuth mAuth;
@@ -104,14 +104,19 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
                     case R.id.main_create_group_option:
                         RequestNewGroup();
                         break;
+
+                    case R.id.nav_profile:
+                        Intent intent = new Intent(MainActivity.this,UserProfile.class);
+                        startActivity(intent);
+                        break;
                 }
                 return true;
             }
         });
-//        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-//        mDrawerLayout.addDrawerListener(mToggle);
-//        mToggle.syncState();
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
+        mDrawerLayout.addDrawerListener(mToggle);
+        mToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
     }
@@ -137,9 +142,9 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
                         case R.id.nav_notif:
                             selectedFragment = new NotifFragment();
                             break;
-                        case R.id.nav_profile:
-                            selectedFragment = new ProfileFragment();
-                            break;
+//                        case R.id.nav_profile:
+//                            selectedFragment = new ProfileFragment();
+//                            break;
                     }
 
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -176,8 +181,8 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
 //        return true;
 //    }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 //
 //
 //        if (item.getItemId() == R.id.main_logout_btn) {
@@ -189,11 +194,11 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
 //            RequestNewGroup();
 //        }
 //
-////        if (mToggle.onOptionsItemSelected(item)) {
-////            return true;
-////        }
-//        return true;
-//    }
+          if (mToggle.onOptionsItemSelected(item)) {
+            return true;
+               }
+        return true;
+    }
 
 
     private void RequestNewGroup() {

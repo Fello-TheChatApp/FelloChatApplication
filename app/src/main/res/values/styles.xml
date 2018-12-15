@@ -23,7 +23,7 @@
 
     <!-- FOR ACTION BAR2 -->
     <style name="ActionBar2" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorWhite</item>
+        <item name="colorPrimary">@color/mainpurple</item>
     </style>
 
     <style name="TopicsActionbar" parent="Theme.AppCompat.Light.NoActionBar">

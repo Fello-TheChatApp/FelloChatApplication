@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.apps.shreya.chatapplication"
         minSdkVersion 16
@@ -38,17 +39,19 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.firebaseui:firebase-ui-database:4.2.1'
     //implementation 'com.facebook.android:facebook-login:4.38.1'
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.4.0'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
     implementation 'com.squareup.picasso:picasso:2.5.2'
+
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'com.squareup.okhttp:okhttp:2.5.0'
     implementation 'com.google.firebase:firebase-messaging:11.0.4'
-   
 
 
 }
+
+
 
 apply plugin: 'com.google.gms.google-services'
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

@@ -1,6 +1,7 @@
   package com.apps.shreya.chatapplication;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -70,13 +71,17 @@ mProgress.setMessage("Please wait until we save the changes");
 mProgress.show();
 
 
+
         String status=mStatus.getEditText().getText().toString();
         mStatusDatabase.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful())
                 {
+
+
                     mProgress.dismiss();
+
                 }
                 else
                 {
@@ -85,10 +90,14 @@ mProgress.show();
             }
         });
 
-
+        Intent i=new Intent(StatusActivity.this,UserProfile.class);
+        startActivity(i);
+        finish();
 
     }
 });
+
+
 
 
 
