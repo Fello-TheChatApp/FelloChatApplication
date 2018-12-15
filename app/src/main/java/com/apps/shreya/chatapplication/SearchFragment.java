@@ -2,11 +2,14 @@ package com.apps.shreya.chatapplication;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -53,7 +56,7 @@ public class SearchFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
        mDrawerLocker.lockDrawer();// to hide the drawer layout
-        mToolbar =(Toolbar) view.findViewById(R.id.action_bar);
+      //  mToolbar =(Toolbar) view.findViewById(R.id.action_bar);
 
         mLayoutManager=new LinearLayoutManager(getContext());
 
@@ -96,14 +99,50 @@ public class SearchFragment extends Fragment {
             holder.setUserStatus(model.getStatus());
 
             holder.setUserImage(Users.getThumb_image(),getActivity().getApplicationContext());
-          final   String user_id=getRef(position).getKey();
-                                holder.mView.setOnClickListener(new View.OnClickListener() {
+
+            // final String user_name=getRef(position).(model.getName());
+
+            final   String user_id=getRef(position).getKey();
+            holder.mView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
 
-                                        Intent profileIntent=new Intent(getActivity(),ProfileActivity.class);
-                                        profileIntent.putExtra("user_id",user_id);
-                                        startActivity(profileIntent);
+                                        CharSequence options[] = new CharSequence[]{"Open Profile", "Send message"};
+
+                                        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                                        builder.setTitle("Select Options");
+                                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                //Click Event for each item.
+                                                if(i == 0){
+
+                                                    Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+                                                    profileIntent.putExtra("user_id", user_id);
+                                                    startActivity(profileIntent);
+
+                                                }
+
+                                                if(i == 1){
+
+                                                    Intent chatIntent = new Intent(getContext(), ChatActivity.class);
+                                                    chatIntent.putExtra("user_id", user_id);
+
+                                                    //TO DISPLAY USERS NAME ON TOOLBAR DURING CHAT
+                                                    //           chatIntent.putExtra("user_name", model.getName());
+
+
+                                                    startActivity(chatIntent);
+
+                                                }
+
+                                            }
+                                        });
+
+                                        builder.show();
+
                                     }
                                 });
             //Picasso.with(getActivity()).load(model.getImage()).into(holder.profileImage);
@@ -157,6 +196,16 @@ public class SearchFragment extends Fragment {
             CircleImageView userImageView=(CircleImageView) mView.findViewById(R.id.user_single_image);
             Picasso.with(cxt).load(thumb_image).placeholder(R.drawable.default_avatar).into(userImageView);
         }
+    }
+
+    //TO HIDE TOOLBAR FROM FRAGMENT
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+    }
+    public void onStop() {
+        super.onStop();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 }
 

@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
     //Declare an instance of FirebaseAuth
     private FirebaseAuth mAuth;
     private DatabaseReference RootRef;
+    private DatabaseReference mUserRef;
+    private DatabaseReference mUserDatabase;
 
 
     @Override
@@ -57,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
 
         //initialize the FirebaseAuth instance.
         mAuth = FirebaseAuth.getInstance();
+
+
+        //try adding this IF APP CRASHES
+        if(mAuth.getCurrentUser() != null) {
+            mUserDatabase = FirebaseDatabase.getInstance()
+                    .getReference().child("Users").child(mAuth.getCurrentUser().getUid());}
+
 
         // for the toolbar
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.action_bar);
@@ -128,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
                         case R.id.nav_home:
                             selectedFragment = new HomeFragment();
                             break;
-                        case R.id.nav_explore:
-                            selectedFragment = new ExploreFragment();
+                        case R.id.nav_friends:
+                            selectedFragment = new FriendsFragment();
                             break;
                         case R.id.nav_search:
                             selectedFragment = new SearchFragment();
@@ -159,14 +168,32 @@ public class MainActivity extends AppCompatActivity implements DrawerLocker  {
 
         if (currentUser == null) {
             sendToStart();
-        }
+          }
+// else {
+//
+//            mUserRef.child("online").setValue("true");
+//
+//        }
     }
+
+//    protected void onStop() {
+//        super.onStop();
+//
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//
+////        if(currentUser != null) {
+////
+////            mUserRef.child("online").setValue(ServerValue.TIMESTAMP);
+////
+////        }
+//    }
 
     public void sendToStart() {
         Intent startintent = new Intent(MainActivity.this, LoginPageZero.class);
         startActivity(startintent);
         finish();
     }
+
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
